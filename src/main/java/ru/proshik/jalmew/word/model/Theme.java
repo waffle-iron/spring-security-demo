@@ -14,7 +14,7 @@ import java.util.Date;
 public class Theme {
 
     @Id
-    @Column(name="theme_id")
+    @Column(name="id")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "theme_seq")
     @GenericGenerator(name = "theme_seq", strategy = "enhanced-sequence",
             parameters = {

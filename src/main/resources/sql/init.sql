@@ -21,7 +21,7 @@ DROP SEQUENCE IF EXISTS "user_word_statistic_seq";
 
 CREATE SEQUENCE "theme_seq";
 CREATE TABLE "theme" (
-  "theme_id"           BIGINT PRIMARY KEY       DEFAULT "nextval"('"theme_seq"'),
+  "id"           BIGINT PRIMARY KEY       DEFAULT "nextval"('"theme_seq"'),
   "created_date" TIMESTAMP WITH TIME ZONE DEFAULT "now"(),
   "name"         TEXT NOT NULL,
   -- default or custom
@@ -35,13 +35,13 @@ CREATE TABLE "word" (
   "created_date" TIMESTAMP WITH TIME ZONE DEFAULT "now"(),
   "value"        TEXT NOT NULL,
   "translate"    JSON,
-  "theme_id"     BIGINT REFERENCES "theme" (theme_id),
+  "theme_id"     BIGINT REFERENCES "theme" (id),
   CONSTRAINT "word_unique" UNIQUE (VALUE)
 );
 
 CREATE TABLE "word_theme" (
   "word_id"  BIGINT REFERENCES "word" (id),
-  "theme_id" BIGINT REFERENCES "theme" (theme_id)
+  "theme_id" BIGINT REFERENCES "theme" (id)
 );
 
 CREATE SEQUENCE "user_seq";

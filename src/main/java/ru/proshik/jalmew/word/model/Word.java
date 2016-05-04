@@ -40,8 +40,7 @@ public class Word {
             inverseJoinColumns = {
                     @JoinColumn(
                             name = "theme_id",
-                            referencedColumnName = "theme_id")}
-    )
+                            referencedColumnName = "id")})
     @Cascade(value = {
             org.hibernate.annotations.CascadeType.SAVE_UPDATE,
             org.hibernate.annotations.CascadeType.PERSIST})
