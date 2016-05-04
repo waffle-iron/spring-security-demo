@@ -26,10 +26,10 @@ public class Theme {
     @Column(name = "created_date", nullable = true, updatable = false, insertable = false)
     private Date createdDate;
 
-    @Column(name = "name")
+    @Column
     private String name;
 
-    @Column(name = "holder")
+    @Column
     @Enumerated(EnumType.STRING)
     private HolderTheme holder;
 

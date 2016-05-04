@@ -21,7 +21,7 @@ public class Word {
             parameters = {
                     @org.hibernate.annotations.Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "word_seq"),
                     @org.hibernate.annotations.Parameter(name = SequenceStyleGenerator.OPT_PARAM, value = "pooled-lo"),
-                    @org.hibernate.annotations.Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "10")})
+                    @org.hibernate.annotations.Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1")})
     private Long id;
 
     @Column(name = "created_date", nullable = true, updatable = false, insertable = false)
