@@ -1,10 +1,12 @@
 package ru.proshik.jalmew.word.model;
 
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.*;
 import org.hibernate.id.enhanced.SequenceStyleGenerator;
+import ru.proshik.jalmew.word.configuration.hibernate.types.JSONBUserType;
 
 import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.util.Date;
 import java.util.List;
 
@@ -13,6 +15,12 @@ import java.util.List;
  */
 @Entity
 @Table(name = "word")
+@TypeDef(
+        name = "jsonb",
+        typeClass = JSONBUserType.class,
+        parameters = {@org.hibernate.annotations.Parameter(
+                name = JSONBUserType.CLASS,
+                value = "ru.proshik.jalmew.word.model.Translate")})
 public class Word {
 
     @Id
@@ -30,8 +38,9 @@ public class Word {
     @Column(name = "value")
     private String value;
 
-//    @Column(name = "translate")
-//    private String translate;
+    @Column
+    @Type(type = JSONBUserType.JSONB_TYPE)
+    private Translate translate;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "word_theme",
@@ -44,47 +53,40 @@ public class Word {
     @Cascade(value = {
             org.hibernate.annotations.CascadeType.SAVE_UPDATE,
             org.hibernate.annotations.CascadeType.PERSIST})
-//    @Fetch(FetchMode.SELECT)
+//    @Fetch(FetchMode.SELECT) // TODO: 06.05.16 происследовать, что лучше выбрать в качестве FetchMode
     private List<Theme> theme;
 
 
     public Word() {
+        
     }
 
-//    public Word(String value, String translate) {
-//        this.value = value;
-//        this.translate = translate;
-//    }
 
     public Long getId() {
         return id;
-    }
-
-    public Date getCreatedDate() {
-        return createdDate;
     }
 
     public String getValue() {
         return value;
     }
 
-//    public String getTranslate() {
-//        return translate;
-//    }
-
-    public void setValue(String value) {
-        this.value = value;
+    public Translate getTranslate() {
+        return translate;
     }
 
     public List<Theme> getTheme() {
         return theme;
     }
 
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+    public void setTranslate(Translate translate) {
+        this.translate = translate;
+    }
+
     public void setTheme(List<Theme> theme) {
         this.theme = theme;
     }
-
-//    public void setTranslate(String translate) {
-//        this.translate = translate;
-//    }
 }
