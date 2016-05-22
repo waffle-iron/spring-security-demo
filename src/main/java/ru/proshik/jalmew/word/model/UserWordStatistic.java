@@ -34,6 +34,10 @@ public class UserWordStatistic {
     public UserWordStatistic() {
     }
 
+    public UserWordStatistic(LearningState state) {
+        this.state = state;
+    }
+
     public Long getId() {
         return id;
     }

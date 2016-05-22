@@ -52,9 +52,9 @@
     <logger name="FAULT_REQUEST_LOG" level="ERROR">
         <appender-ref ref="FAULT_REQUEST_LOG"/>
     </logger>
-    <logger name="org.hibernate.type" level="INFO"/>
-    <logger name="org.hibernate" level="INFO"/>
-    <logger name="ru.russianpost.subscription" level="DEBUG"/>
+    <logger name="org.hibernate.type" level="TRACE"/>
+    <logger name="org.hibernate" level="DEBUG"/>
+    <logger name="ru.proshik.jalmew" level="DEBUG"/>
     <logger name="SELFTEST_LOG" level="DEBUG">
         <appender-ref ref="SELFTEST_LOG"/>
     </logger>

@@ -10,14 +10,14 @@ import java.util.Date;
  * Created by proshik on 05.05.16.
  */
 @Entity
-@Table(name = "user_words")
-public class UserWords {
+@Table(name = "user_word")
+public class UserWord {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_words_seq")
-    @GenericGenerator(name = "user_words_seq", strategy = "enhanced-sequence",
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_word_seq")
+    @GenericGenerator(name = "user_word_seq", strategy = "enhanced-sequence",
             parameters = {
-                    @org.hibernate.annotations.Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "user_words_seq"),
+                    @org.hibernate.annotations.Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "user_word_seq"),
                     @org.hibernate.annotations.Parameter(name = SequenceStyleGenerator.OPT_PARAM, value = "pooled-lo"),
                     @org.hibernate.annotations.Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1")})
     private Long id;
@@ -25,9 +25,9 @@ public class UserWords {
     @Column(name = "created_date", nullable = true, updatable = false, insertable = false)
     private Date createdDate;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "user_id", updatable = false)
-    private User user;
+    private Users users;
 
     @ManyToOne
     @JoinColumn(name = "word_id", updatable = false)
@@ -38,15 +38,21 @@ public class UserWords {
     private UserWordStatistic statistic;
 
 
-    public UserWords() {
+    public UserWord() {
+    }
+
+    public UserWord(Users user, Word word) {
+        this.users = user;
+        this.word = word;
+        this.statistic = new UserWordStatistic(LearningState.NEW);
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUser(Users user) {
+        this.users = user;
     }
 
     public void setWord(Word word) {
@@ -57,8 +63,8 @@ public class UserWords {
         this.statistic = statistic;
     }
 
-    public User getUser() {
-        return user;
+    public Users getUser() {
+        return users;
     }
 
     public Word getWord() {

@@ -3,6 +3,7 @@ package ru.proshik.jalmew.word.model;
 import org.hibernate.annotations.*;
 import org.hibernate.id.enhanced.SequenceStyleGenerator;
 import ru.proshik.jalmew.word.configuration.hibernate.types.JSONBUserType;
+import ru.proshik.jalmew.word.model.ydict.YTranslateWord;
 
 import javax.persistence.*;
 import javax.persistence.Entity;
@@ -20,7 +21,7 @@ import java.util.List;
         typeClass = JSONBUserType.class,
         parameters = {@org.hibernate.annotations.Parameter(
                 name = JSONBUserType.CLASS,
-                value = "ru.proshik.jalmew.word.model.Translate")})
+                value = "ru.proshik.jalmew.word.model.ydict.YTranslateWord")})
 public class Word {
 
     @Id
@@ -40,7 +41,7 @@ public class Word {
 
     @Column
     @Type(type = JSONBUserType.JSONB_TYPE)
-    private Translate translate;
+    private YTranslateWord translate;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "word_theme",
@@ -53,24 +54,32 @@ public class Word {
     @Cascade(value = {
             org.hibernate.annotations.CascadeType.SAVE_UPDATE,
             org.hibernate.annotations.CascadeType.PERSIST})
-//    @Fetch(FetchMode.SELECT) // TODO: 06.05.16 происследовать, что лучше выбрать в качестве FetchMode
+//    @Fetch(FetchMode.SUBSELECT) // TODO: 06.05.16 происследовать, что лучше выбрать в качестве FetchMode
     private List<Theme> theme;
 
 
     public Word() {
-        
     }
 
+    public Word(String value, YTranslateWord translate) {
+        this.value = value;
+        this.translate = translate;
+//        this.theme = theme;
+    }
 
     public Long getId() {
         return id;
+    }
+
+    public Date getCreatedDate() {
+        return createdDate;
     }
 
     public String getValue() {
         return value;
     }
 
-    public Translate getTranslate() {
+    public YTranslateWord getTranslate() {
         return translate;
     }
 
@@ -82,7 +91,7 @@ public class Word {
         this.value = value;
     }
 
-    public void setTranslate(Translate translate) {
+    public void setTranslate(YTranslateWord translate) {
         this.translate = translate;
     }
 

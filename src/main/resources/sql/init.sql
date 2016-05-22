@@ -8,11 +8,11 @@ DROP TABLE IF EXISTS "word_theme" CASCADE;
 DROP TABLE IF EXISTS "word" CASCADE;
 DROP SEQUENCE IF EXISTS "word_seq";
 
-DROP TABLE IF EXISTS "user" CASCADE;
-DROP SEQUENCE IF EXISTS "user_seq";
+DROP TABLE IF EXISTS "users" CASCADE;
+DROP SEQUENCE IF EXISTS "users_seq";
 
-DROP TABLE IF EXISTS "user_words" CASCADE;
-DROP SEQUENCE IF EXISTS "user_words_seq";
+DROP TABLE IF EXISTS "user_word" CASCADE;
+DROP SEQUENCE IF EXISTS "user_word_seq";
 
 DROP TABLE IF EXISTS "user_word_statistic" CASCADE;
 DROP SEQUENCE IF EXISTS "user_word_statistic_seq";
@@ -44,9 +44,9 @@ CREATE TABLE "word_theme" (
   "theme_id" BIGINT REFERENCES "theme" (id)
 );
 
-CREATE SEQUENCE "user_seq";
-CREATE TABLE "user" (
-  "id"               BIGINT PRIMARY KEY       DEFAULT "nextval"('"user_seq"'),
+CREATE SEQUENCE "users_seq";
+CREATE TABLE "users" (
+  "id"               BIGINT PRIMARY KEY       DEFAULT "nextval"('"users_seq"'),
   "created_date"     TIMESTAMP WITH TIME ZONE DEFAULT "now"(),
   "login"            TEXT NOT NULL,
   "password"         TEXT NOT NULL,
@@ -64,12 +64,12 @@ CREATE TABLE "user_word_statistic" (
   "state"         TEXT NOT NULL
 );
 
-CREATE SEQUENCE "user_words_seq";
-CREATE TABLE "user_words" (
-  "id"           BIGINT PRIMARY KEY       DEFAULT "nextval"('"user_words_seq"'),
+CREATE SEQUENCE "user_word_seq";
+CREATE TABLE "user_word" (
+  "id"           BIGINT PRIMARY KEY       DEFAULT "nextval"('"user_word_seq"'),
   "created_date" TIMESTAMP WITH TIME ZONE DEFAULT "now"(),
   "word_id"      BIGINT REFERENCES "word" ("id"),
-  "user_id"      BIGINT REFERENCES "user" ("id"),
+  "user_id"      BIGINT REFERENCES "users" ("id"),
   "user_word_statistic_id" BIGINT REFERENCES "user_word_statistic" ("id"),
   CONSTRAINT "word_id_and_use_id" UNIQUE (word_id, user_id)
 );

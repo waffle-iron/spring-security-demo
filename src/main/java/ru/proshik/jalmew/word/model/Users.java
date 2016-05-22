@@ -1,6 +1,5 @@
 package ru.proshik.jalmew.word.model;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.id.enhanced.SequenceStyleGenerator;
 
@@ -13,14 +12,14 @@ import java.util.Set;
  * Created by proshik on 05.05.16.
  */
 @Entity
-@Table(name = "user")
-public class User {
+@Table(name = "users")
+public class Users {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_seq")
-    @GenericGenerator(name = "user_seq", strategy = "enhanced-sequence",
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "users_seq")
+    @GenericGenerator(name = "users_seq", strategy = "enhanced-sequence",
             parameters = {
-                    @org.hibernate.annotations.Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "user_seq"),
+                    @org.hibernate.annotations.Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "users_seq"),
                     @org.hibernate.annotations.Parameter(name = SequenceStyleGenerator.OPT_PARAM, value = "pooled-lo"),
                     @org.hibernate.annotations.Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1")})
     private Long id;
@@ -40,11 +39,19 @@ public class User {
     @Column(name = "email")
     private String email;
 
-    @OneToMany(mappedBy = "user")
-    private Set<UserWords> userWords;
+    @OneToMany(mappedBy = "users")
+    private Set<UserWord> userWords;
 
-    public User() {
+    public Users() {
 
+    }
+
+    public Users(String login, String password, Boolean confirmPassword, String email) {
+        this.login = login;
+        this.password = password;
+        this.confirmPassword = confirmPassword;
+        this.email = email;
+        this.userWords = userWords;
     }
 
     public void setLogin(String login) {

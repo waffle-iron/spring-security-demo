@@ -31,9 +31,14 @@ public class Theme {
 
     @Column
     @Enumerated(EnumType.STRING)
-    private HolderTheme holder;
+    private ThemeType holder;
 
     public Theme() {
+    }
+
+    public Theme(String name, ThemeType holder) {
+        this.name = name;
+        this.holder = holder;
     }
 
     public Long getId() {
@@ -56,11 +61,11 @@ public class Theme {
         this.name = name;
     }
 
-    public HolderTheme getHolder() {
+    public ThemeType getHolder() {
         return holder;
     }
 
-    public void setHolder(HolderTheme holder) {
+    public void setHolder(ThemeType holder) {
         this.holder = holder;
     }
 }
