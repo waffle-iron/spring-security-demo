@@ -19,12 +19,12 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    @PostConstruct
+//    @PostConstruct
     public void init() {
-        Optional<Users> user = userRepository.findByLogin("user");
+        Optional<Users> user = userRepository.findByUsername("user");
 
         if (!user.isPresent()) {
-            this.user = userRepository.save(new Users("user", "password", Boolean.TRUE, "email"));
+            this.user = userRepository.save(new Users("user", "password", Boolean.TRUE, Boolean.TRUE, "email"));
         } else {
             this.user = user.get();
         }

@@ -14,6 +14,7 @@ import org.springframework.web.client.RestClientException;
 import ru.proshik.jalmew.word.dto.ErrorBean;
 import ru.proshik.jalmew.word.dto.WordRestIn;
 import ru.proshik.jalmew.word.service.WordService;
+import ru.proshik.jalmew.word.service.WordServiceImpl;
 import ru.proshik.jalmew.word.service.dto.UserWordServiceOut;
 import ru.proshik.jalmew.word.service.exception.UserWordAlreadyExistException;
 import ru.proshik.jalmew.word.service.exception.WordNotFountException;
@@ -32,7 +33,7 @@ public class WordController {
     @Autowired
     private WordService wordService;
 
-    @RequestMapping(method = RequestMethod.POST)
+    @RequestMapping(method = RequestMethod.POST, consumes = {"application/json"})
     public ResponseEntity add(@RequestBody @Validated WordRestIn param) {
         try {
             wordService.saveWord(param);

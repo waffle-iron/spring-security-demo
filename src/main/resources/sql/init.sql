@@ -17,6 +17,9 @@ DROP SEQUENCE IF EXISTS "user_word_seq";
 DROP TABLE IF EXISTS "user_word_statistic" CASCADE;
 DROP SEQUENCE IF EXISTS "user_word_statistic_seq";
 
+DROP TABLE IF EXISTS "authorities" CASCADE;
+DROP SEQUENCE IF EXISTS "authorities_seq";
+
 ---------------------------------------------------------
 
 CREATE SEQUENCE "theme_seq";
@@ -48,28 +51,39 @@ CREATE SEQUENCE "users_seq";
 CREATE TABLE "users" (
   "id"               BIGINT PRIMARY KEY       DEFAULT "nextval"('"users_seq"'),
   "created_date"     TIMESTAMP WITH TIME ZONE DEFAULT "now"(),
-  "login"            TEXT NOT NULL,
-  "password"         TEXT NOT NULL,
+  "username"         TEXT    NOT NULL,
+  "enabled"          BOOLEAN NOT NULL,
+  "password"         TEXT    NOT NULL,
   "confirm_password" BOOLEAN,
   "email"            TEXT,
-  CONSTRAINT "login_unique" UNIQUE (login),
+  CONSTRAINT "username_unique" UNIQUE (username),
   CONSTRAINT "email_unique" UNIQUE (email)
+);
+
+CREATE SEQUENCE "authorities_seq";
+CREATE TABLE "authorities" (
+  "id"        BIGINT PRIMARY KEY DEFAULT "nextval"('"authorities_seq"'),
+  "username"  TEXT NOT NULL,
+  "authority" TEXT NOT NULL      DEFAULT 'ROLE_USER',
+
+  CONSTRAINT ix_auth_username UNIQUE (username, authority),
+  CONSTRAINT fk_authorities_users FOREIGN KEY (username) REFERENCES users (username)
 );
 
 CREATE SEQUENCE "user_word_statistic_seq";
 CREATE TABLE "user_word_statistic" (
-  "id"            BIGINT PRIMARY KEY       DEFAULT "nextval"('"user_word_statistic_seq"'),
-  "created_date"  TIMESTAMP WITH TIME ZONE DEFAULT "now"(),
+  "id"           BIGINT PRIMARY KEY       DEFAULT "nextval"('"user_word_statistic_seq"'),
+  "created_date" TIMESTAMP WITH TIME ZONE DEFAULT "now"(),
   -- new, in_progress, learning
-  "state"         TEXT NOT NULL
+  "state"        TEXT NOT NULL
 );
 
 CREATE SEQUENCE "user_word_seq";
 CREATE TABLE "user_word" (
-  "id"           BIGINT PRIMARY KEY       DEFAULT "nextval"('"user_word_seq"'),
-  "created_date" TIMESTAMP WITH TIME ZONE DEFAULT "now"(),
-  "word_id"      BIGINT REFERENCES "word" ("id"),
-  "user_id"      BIGINT REFERENCES "users" ("id"),
+  "id"                     BIGINT PRIMARY KEY       DEFAULT "nextval"('"user_word_seq"'),
+  "created_date"           TIMESTAMP WITH TIME ZONE DEFAULT "now"(),
+  "word_id"                BIGINT REFERENCES "word" ("id"),
+  "user_id"                BIGINT REFERENCES "users" ("id"),
   "user_word_statistic_id" BIGINT REFERENCES "user_word_statistic" ("id"),
   CONSTRAINT "word_id_and_use_id" UNIQUE (word_id, user_id)
 );

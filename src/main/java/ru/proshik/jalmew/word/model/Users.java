@@ -13,7 +13,7 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "users")
-public class Users {
+public class Users  {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "users_seq")
@@ -27,11 +27,14 @@ public class Users {
     @Column(name = "created_date", nullable = true, updatable = false, insertable = false)
     private Date createdDate;
 
-    @Column(name = "login", updatable = false, nullable = false, unique = true)
-    private String login;
+    @Column(name = "username", updatable = false, nullable = false, unique = true)
+    private String username;
 
     @Column(name = "password", nullable = false)
     private String password;
+
+    @Column(name = "enabled", nullable = false)
+    private Boolean enabled;
 
     @Column(name = "confirm_password")
     private Boolean confirmPassword;
@@ -46,16 +49,21 @@ public class Users {
 
     }
 
-    public Users(String login, String password, Boolean confirmPassword, String email) {
-        this.login = login;
+    public Users(String username, String password, Boolean enabled, Boolean confirmPassword, String email) {
+        this.username = username;
         this.password = password;
+        this.enabled = enabled;
         this.confirmPassword = confirmPassword;
         this.email = email;
         this.userWords = userWords;
     }
 
-    public void setLogin(String login) {
-        this.login = login;
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public void setPassword(String password) {
@@ -78,9 +86,6 @@ public class Users {
         return createdDate;
     }
 
-    public String getLogin() {
-        return login;
-    }
 
     public String getPassword() {
         return password;
@@ -92,5 +97,13 @@ public class Users {
 
     public String getEmail() {
         return email;
+    }
+
+    public Boolean getEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
     }
 }
