@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsByNameServiceWrapper;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationProvider;
 import org.springframework.security.web.authentication.preauth.RequestHeaderAuthenticationFilter;
@@ -35,17 +36,21 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public PreAuthenticatedAuthenticationProvider preAuthenticatedAuthenticationProvider() {
-        PreAuthenticatedAuthenticationProvider preAuthenticatedAuthenticationProvider = new PreAuthenticatedAuthenticationProvider();
-        preAuthenticatedAuthenticationProvider.setPreAuthenticatedUserDetailsService(new UserDetailsByNameServiceWrapper<>(userDetailsService()));
+    public TokenAuthenticationProvider preAuthenticatedAuthenticationProvider() {
+//        PreAuthenticatedAuthenticationProvider preAuthenticatedAuthenticationProvider = new PreAuthenticatedAuthenticationProvider();
+//        preAuthenticatedAuthenticationProvider.setPreAuthenticatedUserDetailsService(new UserDetailsByNameServiceWrapper<>(userDetailsService()));
+//
+//        return preAuthenticatedAuthenticationProvider;
 
-        return preAuthenticatedAuthenticationProvider;
+        return new TokenAuthenticationProvider(new UserDetailsByNameServiceWrapper<>(userDetailsService()));
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .csrf().disable()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
                 .httpBasic().disable()
                 .authorizeRequests()
                 .antMatchers("/security/**").permitAll()
@@ -69,9 +74,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .jdbcAuthentication()
                 .dataSource(dataSource)
                 .and()
-                .authenticationProvider(preAuthenticatedAuthenticationProvider());
+//                .authenticationProvider(new DaoAuthenticationProvider());
 //        auth
-//                .authenticationProvider(preAuthenticatedAuthenticationProvider())
+                .authenticationProvider(preAuthenticatedAuthenticationProvider());
 //                .inMemoryAuthentication()
 //                .withUser("user1").password("secret1").roles("USER")
 //                .and()
