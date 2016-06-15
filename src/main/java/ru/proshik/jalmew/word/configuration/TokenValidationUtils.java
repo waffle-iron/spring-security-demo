@@ -12,7 +12,7 @@ import java.security.NoSuchAlgorithmException;
  * Created by proshik on 15.06.16.
  */
 @Component
-public class TokenProvider {
+public class TokenValidationUtils {
 
     @Value("${secret.key}")
     private String secretKey;

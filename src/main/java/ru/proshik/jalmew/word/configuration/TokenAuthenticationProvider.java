@@ -24,7 +24,7 @@ public class TokenAuthenticationProvider implements AuthenticationProvider, Init
             .getLog(TokenAuthenticationProvider.class);
 
     @Autowired
-    private TokenProvider tokenProvider;
+    private TokenValidationUtils tokenValidationUtils;
 
     private AuthenticationUserDetailsService<PreAuthenticatedAuthenticationToken> preAuthenticatedUserDetailsService = null;
     private UserDetailsChecker userDetailsChecker = new AccountStatusUserDetailsChecker();
@@ -70,13 +70,13 @@ public class TokenAuthenticationProvider implements AuthenticationProvider, Init
         UserDetails ud = preAuthenticatedUserDetailsService
                 .loadUserDetails((PreAuthenticatedAuthenticationToken) authentication);
 
-        Token token = tokenProvider.createToken(ud);
+        Token token = tokenValidationUtils.createToken(ud);
 
         System.out.println(token);
 
         userDetailsChecker.check(ud);
 
-        if (tokenProvider.validateToken(token.getToken(), ud)){
+        if (tokenValidationUtils.validateToken(token.getToken(), ud)){
             PreAuthenticatedAuthenticationToken result = new PreAuthenticatedAuthenticationToken(
                     ud, authentication.getCredentials(), ud.getAuthorities());
             result.setDetails(authentication.getDetails());

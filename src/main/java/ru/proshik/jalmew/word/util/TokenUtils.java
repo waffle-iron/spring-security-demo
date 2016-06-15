@@ -6,7 +6,7 @@ import java.security.NoSuchAlgorithmException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.codec.Hex;
 
-
+@Deprecated
 public class TokenUtils
 {
 
