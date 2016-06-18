@@ -14,7 +14,7 @@ public class AuthController {
 
     @RequestMapping(value = "authenticate", method = RequestMethod.POST)
     public TokenTransfer signIn() {
-        return null;
+        return new TokenTransfer("test");
     }
 
     @RequestMapping(value = "registration", method = RequestMethod.POST)

@@ -20,20 +20,19 @@ import org.springframework.util.Assert;
  */
 public class TokenAuthenticationProvider implements AuthenticationProvider, InitializingBean {
 
-    private static final Log LOG = LogFactory
-            .getLog(TokenAuthenticationProvider.class);
+    private static final Log LOG = LogFactory.getLog(TokenAuthenticationProvider.class);
 
     @Autowired
     private TokenValidationUtils tokenValidationUtils;
 
-    private AuthenticationUserDetailsService<PreAuthenticatedAuthenticationToken> preAuthenticatedUserDetailsService = null;
+    private UserDetailsTokenServiceWrapper preAuthenticatedUserDetailsService = null;
     private UserDetailsChecker userDetailsChecker = new AccountStatusUserDetailsChecker();
     private boolean throwExceptionWhenTokenRejected = false;
 
     public TokenAuthenticationProvider() {
     }
 
-    public TokenAuthenticationProvider(AuthenticationUserDetailsService<PreAuthenticatedAuthenticationToken> preAuthenticatedUserDetailsService) {
+    public TokenAuthenticationProvider(UserDetailsTokenServiceWrapper preAuthenticatedUserDetailsService) {
         this.preAuthenticatedUserDetailsService = preAuthenticatedUserDetailsService;
     }
 
@@ -47,42 +46,33 @@ public class TokenAuthenticationProvider implements AuthenticationProvider, Init
             LOG.debug("PreAuthenticated authentication request: " + authentication);
         }
 
-        if (authentication.getPrincipal() == null) {
-            LOG.debug("No pre-authenticated principal found in request.");
+//        if (authentication.getPrincipal() == null) {
+//            LOG.debug("No pre-authenticated principal found in request.");
+//
+//            if (throwExceptionWhenTokenRejected) {
+//                throw new BadCredentialsException(
+//                        "No pre-authenticated principal found in request.");
+//            }
+//            return null;
+//        }
 
-            if (throwExceptionWhenTokenRejected) {
-                throw new BadCredentialsException(
-                        "No pre-authenticated principal found in request.");
-            }
-            return null;
-        }
+        String principal = tokenValidationUtils.getUserNameFromToken(((AuthenticationToken) authentication).getToken());
 
-        if (authentication.getCredentials() == null) {
-            LOG.debug("No pre-authenticated credentials found in request.");
+        UserDetails ud = preAuthenticatedUserDetailsService.loadUserDetails(principal);
 
-            if (throwExceptionWhenTokenRejected) {
-                throw new BadCredentialsException(
-                        "No pre-authenticated credentials found in request.");
-            }
-            return null;
-        }
-
-        UserDetails ud = preAuthenticatedUserDetailsService
-                .loadUserDetails((PreAuthenticatedAuthenticationToken) authentication);
-
-        Token token = tokenValidationUtils.createToken(ud);
-
-        System.out.println(token);
+        // TODO: 18.06.16 remove next two lines
+//        Token token = tokenValidationUtils.createToken(ud);
+//        System.out.println(token);
 
         userDetailsChecker.check(ud);
 
-        if (tokenValidationUtils.validateToken(token.getToken(), ud)){
+        if (tokenValidationUtils.validateToken(((AuthenticationToken) authentication).getToken(), ud)) {
             PreAuthenticatedAuthenticationToken result = new PreAuthenticatedAuthenticationToken(
                     ud, authentication.getCredentials(), ud.getAuthorities());
             result.setDetails(authentication.getDetails());
 
             return result;
-        }else {
+        } else {
             throw new BadCredentialsException("Token did not pass validation");
         }
 
@@ -91,12 +81,7 @@ public class TokenAuthenticationProvider implements AuthenticationProvider, Init
 
     @Override
     public boolean supports(Class<?> authentication) {
-        return authentication.equals(PreAuthenticatedAuthenticationToken.class);
-    }
-
-    public void setPreAuthenticatedUserDetailsService(
-            AuthenticationUserDetailsService<PreAuthenticatedAuthenticationToken> uds) {
-        this.preAuthenticatedUserDetailsService = uds;
+        return authentication.equals(AuthenticationToken.class);
     }
 
     /**

@@ -10,9 +10,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsByNameServiceWrapper;
-import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationProvider;
 import org.springframework.security.web.authentication.preauth.RequestHeaderAuthenticationFilter;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 /**
  * Created by proshik on 06.05.16.
@@ -26,23 +25,27 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Bean
     @DependsOn("dataSource")
-    public RequestHeaderAuthenticationFilter requestHeaderAuthenticationFilter() throws Exception {
-        RequestHeaderAuthenticationFilter requestHeaderAuthenticationFilter = new RequestHeaderAuthenticationFilter();
+    public TokenAuthenticationFilter requestHeaderAuthenticationFilter() throws Exception {
+        TokenAuthenticationFilter requestHeaderAuthenticationFilter = new TokenAuthenticationFilter();
         requestHeaderAuthenticationFilter.setPrincipalRequestHeader("X-AUTH-TOKEN");
         requestHeaderAuthenticationFilter.setAuthenticationManager(authenticationManager());
         requestHeaderAuthenticationFilter.setExceptionIfHeaderMissing(false);
-
         return requestHeaderAuthenticationFilter;
+
+//        RequestHeaderAuthenticationFilter requestHeaderAuthenticationFilter = new RequestHeaderAuthenticationFilter();
+//        requestHeaderAuthenticationFilter.setPrincipalRequestHeader("X-AUTH-TOKEN");
+//        requestHeaderAuthenticationFilter.setAuthenticationManager(authenticationManager());
+//        requestHeaderAuthenticationFilter.setExceptionIfHeaderMissing(false);
+//        return requestHeaderAuthenticationFilter;
     }
 
     @Bean
     public TokenAuthenticationProvider preAuthenticatedAuthenticationProvider() {
 //        PreAuthenticatedAuthenticationProvider preAuthenticatedAuthenticationProvider = new PreAuthenticatedAuthenticationProvider();
 //        preAuthenticatedAuthenticationProvider.setPreAuthenticatedUserDetailsService(new UserDetailsByNameServiceWrapper<>(userDetailsService()));
-//
 //        return preAuthenticatedAuthenticationProvider;
 
-        return new TokenAuthenticationProvider(new UserDetailsByNameServiceWrapper<>(userDetailsService()));
+        return new TokenAuthenticationProvider(new UserDetailsTokenServiceWrapper(userDetailsService()));
     }
 
     @Override
@@ -58,14 +61,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 //                .antMatchers("/db/**").access("hasRole('ADMIN') and hasRole('DBA')")
                 .anyRequest().authenticated()
                 .and()
-                .addFilter(requestHeaderAuthenticationFilter());
+//                .addFilter(requestHeaderAuthenticationFilter());
 
-//        http
-//                .authorizeRequests().anyRequest().authenticated()
-//                .and()
-//                .httpBasic()
-//                .and()
-//                .csrf().disable();
+        .addFilterBefore(requestHeaderAuthenticationFilter(), BasicAuthenticationFilter.class);
+
     }
 
     @Override

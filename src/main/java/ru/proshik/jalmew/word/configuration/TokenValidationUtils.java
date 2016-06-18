@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.codec.Hex;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Base64Utils;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -27,15 +28,14 @@ public class TokenValidationUtils {
     public Token createToken(UserDetails userDetails) {
         long expires = System.currentTimeMillis() + 1000L * tokenValidity;
         String token = userDetails.getUsername() + ":" + expires + ":" + computeSignature(userDetails, expires);
-        return new Token(token, expires);
+        return new Token(Base64Utils.encodeToString(token.getBytes()), expires);
     }
 
     public String computeSignature(UserDetails userDetails, long expires) {
-        StringBuilder signatureBuilder = new StringBuilder();
-        signatureBuilder.append(userDetails.getUsername()).append(":");
-        signatureBuilder.append(expires).append(":");
-        signatureBuilder.append(userDetails.getPassword()).append(":");
-        signatureBuilder.append(secretKey);
+        String signatureBuilder = userDetails.getUsername() + ":" +
+                expires + ":" +
+                userDetails.getPassword() + ":" +
+                secretKey;
 
         MessageDigest digest;
         try {
@@ -43,19 +43,17 @@ public class TokenValidationUtils {
         } catch (NoSuchAlgorithmException e) {
             throw new IllegalStateException("No MD5 algorithm available!");
         }
-        return new String(Hex.encode(digest.digest(signatureBuilder.toString().getBytes())));
+        return new String(Hex.encode(digest.digest(signatureBuilder.getBytes())));
     }
 
     public String getUserNameFromToken(String authToken) {
-        if (authToken == null) {
-            return null;
-        }
-        String[] parts = authToken.split(":");
+        String[] parts = new String(Base64Utils.decodeFromString(authToken)).split(":");
         return parts[0];
     }
 
     public boolean validateToken(String authToken, UserDetails userDetails) {
-        String[] parts = authToken.split(":");
+        byte[] bytes = Base64Utils.decodeFromString(authToken);
+        String[] parts = new String(bytes).split(":");
         long expires = Long.parseLong(parts[1]);
         String signature = parts[2];
         String signatureToMatch = computeSignature(userDetails, expires);
