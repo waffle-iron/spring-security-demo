@@ -45,9 +45,9 @@ public class TokenAuthenticationFilter extends GenericFilterBean implements Appl
                     + SecurityContextHolder.getContext().getAuthentication());
         }
 
-        if (requiresAuthentication((HttpServletRequest) request)) {
+//        if (requiresAuthentication((HttpServletRequest) request)) {
             doAuthenticate((HttpServletRequest) request, (HttpServletResponse) response);
-        }
+//        }
 
         chain.doFilter(request, response);
     }
